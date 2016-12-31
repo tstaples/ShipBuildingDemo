@@ -5,13 +5,22 @@
 #include "ShipPart.h"
 #include "ShipAttachPoint.h"
 #include "Serialization/ShipSaveGame.h"
-
+#include "ShipPartFactory.h"
 
 
 AShipEditorPlayerController::AShipEditorPlayerController()
 	: CurrentlyHeldShipPart(nullptr)
+	, ShipPartFactory(nullptr)
 {
 	bShowMouseCursor = true;
+}
+
+void AShipEditorPlayerController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	ShipPartFactory = NewObject<UShipPartFactory>();
+	ShipPartFactory->Init("/Game/ShipParts");
 }
 
 void AShipEditorPlayerController::SetupInputComponent()
@@ -123,30 +132,19 @@ void AShipEditorPlayerController::Tick(float DeltaTime)
 	}
 }
 
-AShipPart* AShipEditorPlayerController::CreateShipPart(TSubclassOf<AShipPart> PartClass)
+void AShipEditorPlayerController::SpawnShipPart(FName PartName)
 {
-	if (!ensureMsgf(GetWorld(), TEXT("World is invalid")))
-		return nullptr;
-
-	if (PartClass == nullptr)
+	AShipPart* ShipPart = ShipPartFactory->MakeShipPart(this, PartName);
+	if (ShipPart)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Cannot create ship part from null class"));
-		return nullptr;
+		UE_LOG(LogTemp, Log, TEXT("Successfully created part: %s"), *PartName.ToString());
+		// Add the part to our internal list.
+		ShipParts.Add(ShipPart);
 	}
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AShipPart* ShipPart = GetWorld()->SpawnActor<AShipPart>(PartClass, FVector(0.f, 0.f, 300.f), FRotator::ZeroRotator, SpawnParams);
-	if (!ShipPart)
+	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to create ship part from class: %s"), *GetNameSafe(PartClass));
-		return ShipPart;
+		UE_LOG(LogTemp, Error, TEXT("Failed to make part: %s"), *PartName.ToString());
 	}
-	
-	// Add the part to our internal list.
-	ShipParts.Add(ShipPart);
-	return ShipPart;
 }
 
 // NOTE: this will have to be re-calculated if we allow rotating parts.

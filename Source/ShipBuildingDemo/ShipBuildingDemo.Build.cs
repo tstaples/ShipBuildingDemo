@@ -6,6 +6,6 @@ public class ShipBuildingDemo : ModuleRules
 {
 	public ShipBuildingDemo(TargetInfo Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Slate", "SlateCore" });
 	}
 }

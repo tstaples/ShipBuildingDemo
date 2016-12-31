@@ -28,6 +28,11 @@ class SHIPBUILDINGDEMO_API AShipEditorPlayerController : public APlayerControlle
 		bool IsValid() const { return (OwnedPoint && OtherPoint); }
 	};
 
+	// Ship attach points compatible with the currently held ship part.
+	// Populated when a ship part is selected.
+	// TODO: Need to make uproperty to prevent gc?
+	TArray<FAttachPointCacheEntry> CachedCompatiblePoints;
+
 	// Ship part currently being held.
 	UPROPERTY(Transient)
 	AShipPart* CurrentlyHeldShipPart;
@@ -39,21 +44,20 @@ class SHIPBUILDINGDEMO_API AShipEditorPlayerController : public APlayerControlle
 	UPROPERTY()
 	TArray<AShipPart*> ShipParts;
 
-	// Ship attach points compatible with the currently held ship part.
-	// Populated when a ship part is selected.
-	TArray<FAttachPointCacheEntry> CachedCompatiblePoints;
+	UPROPERTY()
+	class UShipPartFactory* ShipPartFactory;
 
 public:
 	AShipEditorPlayerController();
 	
 	// Begin PlayerController Interface.
+	virtual void PostInitializeComponents() override;
 	virtual void SetupInputComponent() override;
 	virtual void Tick(float DeltaTime) override;
 	// End PlayerController Interface.
 
-	// Temp BPCallable for use in our hacky temp UI.
-	UFUNCTION(BlueprintCallable, Category="ShipPartFactory")
-	AShipPart* CreateShipPart(TSubclassOf<AShipPart> PartClass);
+	UFUNCTION(BlueprintCallable, Category = "ShipPartFactory")
+	void SpawnShipPart(FName PartName);
 
 	// Temp BPCallable for use in our hacky temp UI.
 	// ShipName is name user enters.
@@ -74,6 +78,7 @@ public:
 	void ClearShip();
 
 	FORCEINLINE bool HoldingShipPart() const { return (CurrentlyHeldShipPart != nullptr); }
+	FORCEINLINE class UShipPartFactory* GetShipPartFactory() const { return ShipPartFactory; }
 
 private:
 	// Input callbacks
