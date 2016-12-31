@@ -4,18 +4,8 @@
 #include "ShipEditorPlayerController.h"
 #include "ShipPart.h"
 #include "ShipAttachPoint.h"
+#include "Serialization/ShipSaveGame.h"
 
-
-namespace
-{
-	// Clears an array but retains the memory.
-	template<typename T>
-	void ClearArray(TArray<T>& Arr, bool bRetainSlack = true)
-	{
-		const int32 Slack = bRetainSlack ? Arr.Num() : 0;
-		Arr.Empty(Slack);
-	}
-}
 
 
 AShipEditorPlayerController::AShipEditorPlayerController()
@@ -71,7 +61,7 @@ void AShipEditorPlayerController::OnReleaseClick()
 		// Clear the cache but keep the memory allocated.
 		// TODO: track the last selected part and re-use the cache if we select the same one we just did.
 		// Will involve invalidation when a new part is created though.
-		ClearArray(CachedCompatiblePoints);
+		ShipUtils::ClearArray(CachedCompatiblePoints);
 	}
 }
 
@@ -164,7 +154,7 @@ bool AShipEditorPlayerController::CollectCompatiblePoints(const AShipPart* ShipP
 {
 	check(ShipPart);
 	
-	ClearArray(OutCompatiblePoints);
+	ShipUtils::ClearArray(OutCompatiblePoints);
 
 	// TODO: allow slight difference and compensate by rotating when snapping.
 	// Will be needed for snapping parts onto non-flat surfaces.
@@ -263,4 +253,82 @@ int32 AShipEditorPlayerController::FindPointsToSnapTogether(const TArray<FAttach
 	}
 
 	return BestIndex;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Saving
+//////////////////////////////////////////////////////////////////////////
+
+bool AShipEditorPlayerController::SaveShip(const FString& ShipName)
+{
+	UE_LOG(LogTemp, Log, TEXT("Saving ship: %s"), *ShipName);
+
+	UShipSaveGame* ShipSaveData = GetSaveDataForShip(ShipName);
+	if (!ShipSaveData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get or create save data for ship: %s"), *ShipName);
+		return false;
+	}
+
+	if (!ShipSaveData->SaveShip(ShipName, ShipParts))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to save data for ship: %s"), *ShipName);
+		return false;
+	}
+
+	// TODO: update some internal flag that there are no unsaved changes (set false when change is made). Used to check if we should prompt to save before loading/exiting.
+	// TODO: maybe create some sort of prefix for the slot name.
+	return UGameplayStatics::SaveGameToSlot(ShipSaveData, ShipName, 0);
+}
+
+bool AShipEditorPlayerController::LoadShip(const FString& ShipName)
+{
+	UE_LOG(LogTemp, Log, TEXT("Loading ship: %s"), *ShipName);
+
+	// TODO: check if we're loading the one we're currently using.
+	// TODO: prompt to save current ship if we already have one loaded.
+	// TODO: clear current ship if we have one loaded.
+	if (ShipParts.Num() > 0)
+	{
+		// TODO: actually destroy the ship parts.
+		UE_LOG(LogTemp, Warning, TEXT("Existing ship parts exist; they will be destroyed when loading %s (for now)"), *ShipName);
+		ShipUtils::ClearArray(ShipParts);
+	}
+
+	if (!UGameplayStatics::DoesSaveGameExist(ShipName, 0))
+	{
+		UE_LOG(LogTemp, Error, TEXT("No save data exists for ship: %s"), *ShipName);
+		return false;
+	}
+
+	UShipSaveGame* ShipSaveData = Cast<UShipSaveGame>(UGameplayStatics::LoadGameFromSlot(ShipName, 0));
+	if (!ShipSaveData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load save data for ship: %s"), *ShipName);
+		return false;
+	}
+	checkf(ShipSaveData->GetShipName() == ShipName, TEXT("Ship name in record does not match the one requested to be loaded."));
+
+	// Convert records to ship parts and store in our ShipParts array.
+	if (!ShipSaveData->LoadShip(this, ShipParts))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create ship parts from save data for ship: %s"), *ShipName);
+		return false;
+	}
+
+	return true;
+}
+
+UShipSaveGame* AShipEditorPlayerController::GetSaveDataForShip(const FString& ShipName) const
+{
+	UShipSaveGame* ShipSaveData = nullptr;
+	if (UGameplayStatics::DoesSaveGameExist(ShipName, 0))
+	{
+		ShipSaveData = Cast<UShipSaveGame>(UGameplayStatics::LoadGameFromSlot(ShipName, 0));
+	}
+	else
+	{
+		ShipSaveData = Cast<UShipSaveGame>(UGameplayStatics::CreateSaveGameObject(UShipSaveGame::StaticClass()));
+	}
+	return ShipSaveData;
 }

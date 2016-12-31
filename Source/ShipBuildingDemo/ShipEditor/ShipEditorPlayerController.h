@@ -55,6 +55,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category="ShipPartFactory")
 	AShipPart* CreateShipPart(TSubclassOf<AShipPart> PartClass);
 
+	// Temp BPCallable for use in our hacky temp UI.
+	// ShipName is name user enters.
+	// Returns if it saved successfully or not.
+	UFUNCTION(Exec, BlueprintCallable, Category = "ShipSaving")
+	bool SaveShip(const FString& ShipName);
+
+	// Temp BPCallable for use in our hacky temp UI.
+	// ShipName is name of the ship to load.
+	// Returns if it loaded successfully or not.
+	UFUNCTION(Exec, BlueprintCallable, Category = "ShipSaving")
+	bool LoadShip(const FString& ShipName);
+
 	FORCEINLINE bool HoldingShipPart() const { return (CurrentlyHeldShipPart != nullptr); }
 
 private:
@@ -89,4 +101,9 @@ private:
 	 *	@return: The index of the cache entry whose points should be snapped together. INDEX_NONE otherwise.
 	 */
 	int32 FindPointsToSnapTogether(const TArray<FAttachPointCacheEntry>& CompatiblePoints, const FVector& Delta) const;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Saving
+	//////////////////////////////////////////////////////////////////////////
+	class UShipSaveGame* GetSaveDataForShip(const FString& ShipName) const;
 };

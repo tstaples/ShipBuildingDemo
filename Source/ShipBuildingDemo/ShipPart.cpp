@@ -66,6 +66,7 @@ void AShipPart::DetatchAllPoints()
 			auto* AttachedTo = AttachPoint->GetAttachedToPoint();
 			AttachPoint->DetachFromPoint();
 			AttachedTo->DetachFromPoint();
+			UE_LOG(LogTemp, Log, TEXT("Detaching %s from %s"), *GetNameSafe(AttachPoint), *GetNameSafe(AttachedTo));
 		}
 	}
 }
