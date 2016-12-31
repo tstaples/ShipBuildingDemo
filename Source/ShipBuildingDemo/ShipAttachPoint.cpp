@@ -96,15 +96,9 @@ void UShipAttachPoint::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 }
 
-bool UShipAttachPoint::IsCompatibleWith(const UShipAttachPoint* OtherPoint) const
+bool UShipAttachPoint::IsCompatibleWith(EPartType PartType) const
 {
-	if (IsAttached() || !OtherPoint || OtherPoint->IsAttached())
-		return false;
-
-	// I may miss LINQ just a little bit. Probably a more effecient way to do this.
-	//const auto& OtherParts = OtherPoint->GetCompatibleParts();
-	return CompatibleParts.Contains(OtherPoint->GetOwningShipPart()->GetPartType()); // This might need tweaking
-	//return CompatibleParts.ContainsByPredicate([&OtherParts](const auto& Part) { return OtherParts.Contains(Part); });
+	return CompatibleParts.Contains(PartType);
 }
 
 bool UShipAttachPoint::IsAttached() const

@@ -78,6 +78,17 @@ void AShipPart::SetAllPointsHighlighted(bool bHighlighted)
 	}
 }
 
+TArray<UShipAttachPoint*> AShipPart::GetPointsCompatibleWith(EPartType Type) const
+{
+	TArray<UShipAttachPoint*> Points;
+	for (auto* AttachPoint : AttachPoints)
+	{
+		if (!AttachPoint->IsAttached() && AttachPoint->IsCompatibleWith(Type))
+			Points.Add(AttachPoint);
+	}
+	return Points;
+}
+
 TArray<UShipAttachPoint*> AShipPart::GetAvailableAttachPoints() const
 {
 	TArray<UShipAttachPoint*> Points;

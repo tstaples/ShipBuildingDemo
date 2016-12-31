@@ -55,12 +55,12 @@ public:
 	static void DetachPoints(UShipAttachPoint* A, UShipAttachPoint* B);
 
 	/**
-	 *	Checks if this attach point is compatible with another attach point.
+	 *	Checks if this attach point is compatible with a part type.
 	 *
-	 *	@param OtherPoint: the point to compare this attach point with.
+	 *	@param PartType: the type of the part to check for compatibility with.
 	 *	@return: true if it is compatible.
 	 */
-	bool IsCompatibleWith(const UShipAttachPoint* OtherPoint) const;
+	bool IsCompatibleWith(EPartType PartType) const;
 
 	/**
 	 *	Is this point attached to another ship part

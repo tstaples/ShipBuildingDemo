@@ -167,27 +167,45 @@ bool AShipEditorPlayerController::CollectCompatiblePoints(const AShipPart* ShipP
 	ClearArray(OutCompatiblePoints);
 
 	// TODO: allow slight difference and compensate by rotating when snapping.
+	// Will be needed for snapping parts onto non-flat surfaces.
 	static const float AllowedAngleDifference = 0.f; // Radians
 
+	// Grab the attach points for the selected part to avoid fetching inside the loop.
+	const EPartType SelectedPartType = ShipPart->GetPartType();
 	const auto& AttachPoints = ShipPart->GetAttachPoints();
-	for (TActorIterator<AShipPart> It(GetWorld()); It; ++It)
+	if (AttachPoints.Num() == 0)
 	{
-		AShipPart* OtherPart = *It;
+		UE_LOG(LogTemp, Warning, TEXT("Ship part %s has no attach points."), *GetNameSafe(ShipPart));
+		return false;
+	}
+
+	// Go through all the ship parts.
+	// TODO: ensure the ship parts array is correctly populated when ships are loaded in when that's implemented.
+	for (AShipPart* OtherPart : ShipParts)
+	{
+		// Ignore the part we're checking
 		if (OtherPart == ShipPart)
 			continue;
 
-		auto AvailableAttachPoints = OtherPart->GetAvailableAttachPoints();
-		for (auto* OtherPoint : AvailableAttachPoints)
+		// Does the other part have any points that are compatible with the selected part?
+		const EPartType OtherPartType = OtherPart->GetPartType();
+		auto PointsCompatibleWithSelected = OtherPart->GetPointsCompatibleWith(SelectedPartType);
+		if (PointsCompatibleWithSelected.Num() == 0)
+			continue;
+
+		// Check if the selected part has any points that are compatible with the other part.
+		for (auto* AttachPoint : AttachPoints)
 		{
-			for (auto* AttachPoint : AttachPoints)
+			if (!AttachPoint->IsCompatibleWith(OtherPartType))
+				continue;
+
+			// Iter through all the compatible points on the other part
+			for (auto* OtherPoint : PointsCompatibleWithSelected)
 			{
+				// TODO: test points against all filters defined by the selected part if we need that kind of granularity.
 				// If the normals aren't within the allowed range then ignore them.
 				const float Dot = FVector::DotProduct(AttachPoint->GetNormal(), OtherPoint->GetNormal());
 				if (!FMath::IsNearlyEqual(Dot, -1.f, THRESH_NORMALS_ARE_PARALLEL))
-					continue;
-
-				// Check if they share any of the same allowed part types.
-				if (!AttachPoint->IsCompatibleWith(OtherPoint))
 					continue;
 
 				OutCompatiblePoints.Add({ AttachPoint, OtherPoint });

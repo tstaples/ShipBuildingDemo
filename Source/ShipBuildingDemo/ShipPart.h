@@ -60,6 +60,14 @@ public:
 	void SetAllPointsHighlighted(bool bHighlighted);
 
 	/**
+	 *	Gets all attach points that aren't attached to anything and are compatible with the given type.
+	 *
+	 *	@Type: The part type to check for compatibility with.
+	 *	@return: A list of this part's attach points that are compatible with the type.
+	 */
+	TArray<UShipAttachPoint*> GetPointsCompatibleWith(EPartType Type) const;
+
+	/**
 	 *	Gets all attach points that aren't attached to anything.
 	 */
 	TArray<UShipAttachPoint*> GetAvailableAttachPoints() const;
