@@ -52,7 +52,12 @@ bool UShipSaveGame::LoadShip(UObject* WorldContext, TArray<AShipPart*>& OutShipP
 		return true;
 	}
 
-	OutShipParts.Empty(ShipPartRecords.Num());
+	// This should be empty. TODO: be more explicit here when not tired.
+	if (OutShipParts.Num() > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OutShipParts already contains data; there are likely undestroyed ship parts."));
+		OutShipParts.Empty(ShipPartRecords.Num());
+	}
 
 	// TODO: create the ship part instances from the records and store in OutShipParts.
 	for (const FShipPartRecord& Record : ShipPartRecords)

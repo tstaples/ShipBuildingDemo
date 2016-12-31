@@ -16,6 +16,23 @@ namespace ShipUtils
 		const int32 Slack = bRetainSlack ? Arr.Num() : 0;
 		Arr.Empty(Slack);
 	}
+
+	/**
+	 *	Destroys an array of actors.
+	 *
+	 *	@param ShipParts: The ship parts to destroy.
+	 *	@param bRetainSlack: Should the memory be left allocated.
+	 */
+	template<typename ActorSubclassType>
+	void DestroyActorArray(TArray<ActorSubclassType*>& Arr, bool bRetainSlack = false)
+	{
+		const int32 Count = bRetainSlack ? Arr.Num() : 0;
+		for (int32 i = Arr.Num() - 1; i >= 0; --i)
+		{
+			Arr[i]->Destroy();
+		}
+		Arr.Empty(Count);
+	}
 }
 
 #endif

@@ -137,7 +137,7 @@ AShipPart* AShipEditorPlayerController::CreateShipPart(TSubclassOf<AShipPart> Pa
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AShipPart* ShipPart = GetWorld()->SpawnActor<AShipPart>(PartClass, SpawnParams);
+	AShipPart* ShipPart = GetWorld()->SpawnActor<AShipPart>(PartClass, FVector(0.f, 0.f, 300.f), FRotator::ZeroRotator, SpawnParams);
 	if (!ShipPart)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to create ship part from class: %s"), *GetNameSafe(PartClass));
@@ -255,6 +255,22 @@ int32 AShipEditorPlayerController::FindPointsToSnapTogether(const TArray<FAttach
 	return BestIndex;
 }
 
+void AShipEditorPlayerController::DestroyShipPart(AShipPart* ShipPart) const
+{
+	// Ensure both as either raise concerns
+	if (!ensure(ShipPart) || ensure(!ShipPart->IsActorBeingDestroyed()))
+		return;
+
+	ShipPart->DetatchAllPoints();
+	ShipPart->Destroy();
+}
+
+void AShipEditorPlayerController::ClearShip()
+{
+	UE_LOG(LogTemp, Log, TEXT("Clearing ship"));
+	ShipUtils::DestroyActorArray(ShipParts);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Saving
 //////////////////////////////////////////////////////////////////////////
@@ -287,12 +303,10 @@ bool AShipEditorPlayerController::LoadShip(const FString& ShipName)
 
 	// TODO: check if we're loading the one we're currently using.
 	// TODO: prompt to save current ship if we already have one loaded.
-	// TODO: clear current ship if we have one loaded.
 	if (ShipParts.Num() > 0)
 	{
-		// TODO: actually destroy the ship parts.
 		UE_LOG(LogTemp, Warning, TEXT("Existing ship parts exist; they will be destroyed when loading %s (for now)"), *ShipName);
-		ShipUtils::ClearArray(ShipParts);
+		ShipUtils::DestroyActorArray(ShipParts, true);
 	}
 
 	if (!UGameplayStatics::DoesSaveGameExist(ShipName, 0))

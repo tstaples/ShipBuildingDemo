@@ -67,6 +67,12 @@ public:
 	UFUNCTION(Exec, BlueprintCallable, Category = "ShipSaving")
 	bool LoadShip(const FString& ShipName);
 
+	/**
+	 *	Clears all current ship parts.
+	 */
+	UFUNCTION(Exec, BlueprintCallable, Category = "ShipManipulation")
+	void ClearShip();
+
 	FORCEINLINE bool HoldingShipPart() const { return (CurrentlyHeldShipPart != nullptr); }
 
 private:
@@ -102,8 +108,22 @@ private:
 	 */
 	int32 FindPointsToSnapTogether(const TArray<FAttachPointCacheEntry>& CompatiblePoints, const FVector& Delta) const;
 
+	/**
+	 *	Destroys a ship part and handles detaching it from other parts.
+	 *
+	 *	@param ShipPart: The ship part to destroy.
+	 */
+	void DestroyShipPart(AShipPart* ShipPart) const;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Saving
 	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 *	Loads or creates a UShipSaveGame instance.
+	 *
+	 *	@param ShipName: The name of the ship to load the data for.
+	 *	@return: The sava data or null if it failed to load or create a new instance.
+	 */
 	class UShipSaveGame* GetSaveDataForShip(const FString& ShipName) const;
 };
