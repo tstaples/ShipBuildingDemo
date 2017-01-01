@@ -14,9 +14,6 @@ struct FShipPartData
 {
 	GENERATED_BODY()
 
-	//UPROPERTY(BlueprintReadOnly, Category = FShipPartData)
-	//UClass* PartClass;
-
 	UPROPERTY(BlueprintReadOnly, Category = FShipPartData)
 	FName Name;
 

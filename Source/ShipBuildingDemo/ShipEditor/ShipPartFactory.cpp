@@ -15,6 +15,11 @@ void UShipPartFactory::Init(const FString& RootShipPartPath)
 	if (bAssetDataLoaded)
 		return;
 
+	// TODO: create these in ShipBuldingTypes.h
+	TMap<FString, EPartType> PathToTypes;
+	PathToTypes.Add(FPaths::Combine(*RootShipPartPath, L"Cockpits"), EPartType::PT_Cockpit);
+	PathToTypes.Add(FPaths::Combine(*RootShipPartPath, L"Fuselages"), EPartType::PT_Fuselage);
+
 	ShipPartLibrary = UObjectLibrary::CreateLibrary(AShipPart::StaticClass(), true, false);
 	const int32 NumLoaded = ShipPartLibrary->LoadBlueprintAssetDataFromPath(RootShipPartPath);
 	UE_LOG(LogTemp, Log, TEXT("Loaded %d ship parts"), NumLoaded);
@@ -26,7 +31,12 @@ void UShipPartFactory::Init(const FString& RootShipPartPath)
 	{
 		FShipPartData PartData{};
 		PartData.Name = Data.AssetName; // TODO: strip prefix from name
-		// TODO: figure out how to get the category (maybe through the path?)
+		
+		// Use the path to lookup the type
+		FString Path, Filename, Extension;
+		FPaths::Split(Data.ObjectPath.ToString(), Path, Filename, Extension);
+		PartData.PartType = PathToTypes.Contains(Path) ? PathToTypes[Path] : EPartType::PT_MAX;
+
 		ShipPartData.Add(PartData);
 	}
 
