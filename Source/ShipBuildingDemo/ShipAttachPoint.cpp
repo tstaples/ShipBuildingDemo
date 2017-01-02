@@ -34,7 +34,7 @@ UShipAttachPoint::UShipAttachPoint()
 	DirectionArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Normal"));
 	DirectionArrow->SetupAttachment(this);
 	DirectionArrow->bHiddenInGame = false;
-	DirectionArrow->ArrowSize = 0.75f;
+	DirectionArrow->ArrowSize = 0.5f;
 
 	AttachPointSphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AttachSphere"));
 	AttachPointSphere->SetupAttachment(this);
