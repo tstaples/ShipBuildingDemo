@@ -13,10 +13,13 @@ class SHIPBUILDINGDEMO_API AShipEditorPawn : public ASpectatorPawn
 {
 	GENERATED_BODY()
 	
+	class AShipEditorPlayerController* PCRef;
 	
 public:
 	AShipEditorPawn();
 
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* InInputComponent) override;
-	
+	virtual void AddControllerYawInput(float Val) override;
+	virtual void AddControllerPitchInput(float Val) override;
 };

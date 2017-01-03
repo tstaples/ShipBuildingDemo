@@ -97,13 +97,12 @@ void AShipEditorPlayerController::Tick(float DeltaTime)
 	if (DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
 	{
 		// TODO: Offset by mouse position so the object doesn't snap so the mouse is in the center.
-		// TODO: handle detaching when two attached parts are moved more than some distance from each other.
 
-		// Get the movement delta from the mouse movement
+		// Get the movement delta from the mouse movement.
+		// World location is always ~10 units from the pawn's position, so we must offset by the part's distance or it will move to where we are.
 		const FVector PreviousHeldPartLocation = CurrentlyHeldShipPart->GetActorLocation();
-		const float Dist = FVector::Dist(GetPawn()->GetActorLocation(), PreviousHeldPartLocation);
+		const float Dist = FVector::Dist(WorldLocation, PreviousHeldPartLocation);
 		FVector NewPosition = WorldLocation + WorldDirection * Dist;
-		NewPosition.X = PreviousHeldPartLocation.X; // TODO: use look axis (when movement enabled) to determine which to reset
 		const FVector Delta = NewPosition - PreviousHeldPartLocation;
 
 		if (CurrentlyHeldShipPart->IsAttached())
