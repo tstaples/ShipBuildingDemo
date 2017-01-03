@@ -30,6 +30,7 @@ void AShipEditorPlayerController::SetupInputComponent()
 	check(InputComponent);
 	InputComponent->BindAction("Select", IE_Pressed, this, &AShipEditorPlayerController::OnClick);
 	InputComponent->BindAction("Select", IE_Released, this, &AShipEditorPlayerController::OnReleaseClick);
+	InputComponent->BindAction("Delete", IE_Pressed, this, &AShipEditorPlayerController::DeleteSelectedPart);
 }
 
 void AShipEditorPlayerController::OnClick()
@@ -71,6 +72,16 @@ void AShipEditorPlayerController::OnReleaseClick()
 		// TODO: track the last selected part and re-use the cache if we select the same one we just did.
 		// Will involve invalidation when a new part is created though.
 		ShipUtils::ClearArray(CachedCompatiblePoints);
+	}
+}
+
+void AShipEditorPlayerController::DeleteSelectedPart()
+{
+	if (CurrentlyHeldShipPart)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Destroying ship part: %s"), *GetNameSafe(CurrentlyHeldShipPart));
+		DestroyShipPart(CurrentlyHeldShipPart);
+		OnReleaseClick();
 	}
 }
 
@@ -253,12 +264,13 @@ int32 AShipEditorPlayerController::FindPointsToSnapTogether(const TArray<FAttach
 	return BestIndex;
 }
 
-void AShipEditorPlayerController::DestroyShipPart(AShipPart* ShipPart) const
+void AShipEditorPlayerController::DestroyShipPart(AShipPart* ShipPart)
 {
 	// Ensure both as either raise concerns
-	if (!ensure(ShipPart) || ensure(!ShipPart->IsActorBeingDestroyed()))
+	if (!ensure(ShipPart) || !ensure(!ShipPart->IsActorBeingDestroyed()))
 		return;
 
+	ShipParts.Remove(CurrentlyHeldShipPart);
 	ShipPart->DetatchAllPoints();
 	ShipPart->Destroy();
 }

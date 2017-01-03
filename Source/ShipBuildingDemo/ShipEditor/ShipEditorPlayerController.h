@@ -86,6 +86,8 @@ private:
 	void OnClick();
 	UFUNCTION()
 	void OnReleaseClick();
+	UFUNCTION()
+	void DeleteSelectedPart();
 
 	/**
 	 *	Gathers all Attach points that are compatible with the ship part.
@@ -118,7 +120,7 @@ private:
 	 *
 	 *	@param ShipPart: The ship part to destroy.
 	 */
-	void DestroyShipPart(AShipPart* ShipPart) const;
+	void DestroyShipPart(AShipPart* ShipPart);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Saving
