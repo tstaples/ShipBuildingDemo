@@ -38,7 +38,7 @@ void AShipEditorPlayerController::OnClick()
 	checkf(!HoldingShipPart(), TEXT("Can't click when already holding a ship part"));
 
 	FHitResult Hit;
-	if (!GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit))
+	if (!GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit))
 		return;
 
 	if (Hit.Actor.IsValid() && Hit.Actor->IsA<AShipPart>())

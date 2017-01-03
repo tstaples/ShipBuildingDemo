@@ -18,6 +18,11 @@ void AShipPart::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	ShipPartMesh = FindComponentByClass<UStaticMeshComponent>();
+	if (ShipPartMesh)
+	{
+		// Ignore collision with the camera so the parts don't make the camera jump around.
+		ShipPartMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	}
 
 	// Store the attach point components.
 	auto Components = GetComponentsByClass(UShipAttachPoint::StaticClass());
@@ -26,7 +31,6 @@ void AShipPart::PostInitializeComponents()
 	{
 		AttachPoints.Add(Cast<UShipAttachPoint>(Component));
 	}
-
 }
 
 void AShipPart::BeginPlay()
