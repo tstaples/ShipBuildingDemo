@@ -59,7 +59,7 @@ bool UShipSaveGame::LoadShip(UObject* WorldContext, TArray<AShipPart*>& OutShipP
 		OutShipParts.Empty(ShipPartRecords.Num());
 	}
 
-	// TODO: create the ship part instances from the records and store in OutShipParts.
+	// Create the ship part instances from the records and store in OutShipParts.
 	for (const FShipPartRecord& Record : ShipPartRecords)
 	{
 		auto ShipPart = Cast<AShipPart>(UGameplayStatics::BeginDeferredActorSpawnFromClass(

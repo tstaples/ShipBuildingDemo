@@ -71,6 +71,11 @@ public:
 	UFUNCTION(Exec, BlueprintCallable, Category = "ShipSaving")
 	bool LoadShip(const FString& ShipName);
 
+	// Gets the names of all the saved ships.
+	// Returns if the shipnames were retrieved successfully.
+	UFUNCTION(BlueprintCallable, Category = "ShipSaving")
+	bool GetSavedShipNames(TArray<FName>& OutShipNames);
+
 	/**
 	 *	Clears all current ship parts.
 	 */

@@ -355,3 +355,36 @@ UShipSaveGame* AShipEditorPlayerController::GetSaveDataForShip(const FString& Sh
 	}
 	return ShipSaveData;
 }
+
+bool AShipEditorPlayerController::GetSavedShipNames(TArray<FName>& OutShipNames)
+{
+	// Directory visitor implementation that collects the filenames from a directory and optionally formats them.
+	struct FSaveGameVisitor : public IPlatformFile::FDirectoryVisitor
+	{
+		TArray<FName>& SaveGameFileNames;
+		TFunction<void(FString& Filename)> FormatFunction;
+
+		FSaveGameVisitor(TArray<FName>& OutFileNames, const TFunction<void(FString& Filename)>& Formatter) 
+			: SaveGameFileNames(OutFileNames)
+			, FormatFunction(Formatter) {}
+
+		virtual bool Visit(const TCHAR* FilenameOrDirectory, bool bIsDirectory) override
+		{
+			if (!bIsDirectory)
+			{
+				FString Filename{ FilenameOrDirectory };
+				FormatFunction(Filename);
+				SaveGameFileNames.Add(*Filename);
+			}
+			return true;
+		}
+	};
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	const FString SaveGameDir = FString::Printf(TEXT("%s/SaveGames"), *FPaths::GameSavedDir());
+
+	FSaveGameVisitor SaveGameVisitor{ OutShipNames, [](FString& Filename) {
+		Filename = FPaths::GetBaseFilename(Filename); // Get just the filename.
+	} };
+	return PlatformFile.IterateDirectory(*SaveGameDir, SaveGameVisitor);
+}
