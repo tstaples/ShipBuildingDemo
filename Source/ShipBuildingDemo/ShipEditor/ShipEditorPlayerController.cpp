@@ -2,10 +2,10 @@
 
 #include "ShipBuildingDemo.h"
 #include "ShipEditorPlayerController.h"
-#include "ShipPart.h"
-#include "ShipAttachPoint.h"
+#include "ShipBuilding/ShipPart.h"
+#include "ShipBuilding/ShipAttachPoint.h"
 #include "Serialization/ShipSaveGame.h"
-#include "ShipPartFactory.h"
+#include "ShipBuilding/ShipPartFactory.h"
 
 
 AShipEditorPlayerController::AShipEditorPlayerController()

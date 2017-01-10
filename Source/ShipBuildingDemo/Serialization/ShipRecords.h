@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ShipBuildingTypes.h"
+#include "ShipBuilding/ShipBuildingTypes.h"
 #include "ShipRecords.generated.h"
 
 

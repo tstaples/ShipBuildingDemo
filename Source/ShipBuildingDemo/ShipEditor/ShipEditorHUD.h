@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/HUD.h"
-#include "ShipEditor/ShipPartFactory.h"
+#include "ShipBuilding/ShipPartFactory.h"
 #include "ShipEditorHUD.generated.h"
 
 

@@ -2,7 +2,7 @@
 
 #include "ShipBuildingDemo.h"
 #include "ShipSaveGame.h"
-#include "ShipPart.h"
+#include "ShipBuilding/ShipPart.h"
 
 
 //////////////////////////////////////////////////////////////////////////

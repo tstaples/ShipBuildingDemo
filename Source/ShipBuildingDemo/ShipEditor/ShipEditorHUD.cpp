@@ -2,7 +2,7 @@
 
 #include "ShipBuildingDemo.h"
 #include "ShipEditorHUD.h"
-#include "ShipPart.h"
+#include "ShipBuilding/ShipPart.h"
 #include "ShipEditorPlayerController.h"
 
 void AShipEditorHUD::BeginPlay()
