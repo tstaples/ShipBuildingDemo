@@ -7,6 +7,10 @@
 #include "ShipAttachPoint.generated.h"
 
 
+/**
+ * Represents a point on a ShipPart that other ShipParts can attach to. These are created as child components of a ShipPart and placed where the parts should attach. 
+ * By default these will inherit the `DefaultCompatibleParts` of it's owning ShipPart at runtime, but you can override those directly on the attach point.
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHIPBUILDINGDEMO_API UShipAttachPoint : public USceneComponent
 {

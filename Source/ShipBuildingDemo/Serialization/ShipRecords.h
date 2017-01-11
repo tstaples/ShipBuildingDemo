@@ -5,7 +5,9 @@
 #include "ShipBuilding/ShipBuildingTypes.h"
 #include "ShipRecords.generated.h"
 
-
+/**
+ * Represents the data for a ship part that is written to disk.
+ */
 USTRUCT()
 struct FShipPartRecord
 {

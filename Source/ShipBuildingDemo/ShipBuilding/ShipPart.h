@@ -8,6 +8,9 @@
 
 class UShipAttachPoint;
 
+/**
+ * Base class for all ship parts. This class is what the blueprints for new ship parts is based on. This manages it's attach points, static mesh, and part type.
+ */
 UCLASS()
 class SHIPBUILDINGDEMO_API AShipPart : public AActor
 {

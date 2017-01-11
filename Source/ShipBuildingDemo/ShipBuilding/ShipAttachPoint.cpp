@@ -73,10 +73,6 @@ void UShipAttachPoint::PostInitProperties()
 	{
 		CompatibleParts = OwningShipPart->GetDefaultCompatibleParts();
 	}
-	else if (OwningShipPart == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No owner"));
-	}
 }
 
 void UShipAttachPoint::BeginPlay()
