@@ -50,7 +50,9 @@ void AShipEditorPawn::AddMovementInput(FVector WorldDirection, float ScaleValue 
 void AShipEditorPawn::AddControllerYawInput(float Val)
 {
 	if (Val == 0.f)
+	{
 		return;
+	}
 
 	// Only allow turning when we're not holding anything and the right mouse button is down.
 	if (PCRef && !PCRef->HoldingShipPart() && 
@@ -64,7 +66,9 @@ void AShipEditorPawn::AddControllerYawInput(float Val)
 void AShipEditorPawn::AddControllerPitchInput(float Val)
 {
 	if (Val == 0.f)
+	{
 		return;
+	}
 
 	// Only allow turning when we're not holding anything and the right mouse button is down.
 	if (PCRef && !PCRef->HoldingShipPart() &&
@@ -94,7 +98,9 @@ void AShipEditorPawn::OnZoom(float Val)
 {
 	// This is called every frame so ignore no input.
 	if (Val == 0.f)
+	{
 		return;
+	}
 
 	// Only zoom while shift is held, otherwise pan. We can't add modifier keys to input axis bindings so this will do.
 	if (PCRef->GetInputAnalogKeyState(EKeys::LeftShift) == 0.f)

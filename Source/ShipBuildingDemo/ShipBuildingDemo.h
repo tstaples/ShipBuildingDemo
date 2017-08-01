@@ -11,6 +11,7 @@ namespace ShipUtils
 {
 	/**
 	 *	Clears an array but retains the memory.
+	 *	TODO: make constexpr once upgraded to C++14
 	 *
 	 *	@param Arr: The array to clear.
 	 *	@param bRetainSlack: Should the memory be left allocated.
@@ -18,12 +19,12 @@ namespace ShipUtils
 	template<typename T>
 	FORCEINLINE static void ClearArray(TArray<T>& Arr, bool bRetainSlack = true)
 	{
-		const int32 Slack = bRetainSlack ? Arr.Num() : 0;
-		Arr.Empty(Slack);
+		Arr.Empty(bRetainSlack ? Arr.Num() : 0);
 	}
 
 	/**
 	 *	Destroys an array of actors, optionally leaving the memory intact.
+	 *	TODO: make constexpr once upgraded to C++14
 	 *
 	 *	@param ShipParts: The ship parts to destroy.
 	 *	@param bRetainSlack: Should the memory be left allocated.
@@ -51,12 +52,11 @@ namespace ShipUtils
 	FORCEINLINE static FString EnumValueToString(const FString& Name, TEnum Value)
 	{
 		static const FString EmptyStr{ "" };
-		const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, *Name, true);
-		if (!enumPtr)
+		if (auto enumPtr = FindObject<UEnum>(ANY_PACKAGE, *Name, true))
 		{
-			return EmptyStr;
+			return enumPtr->GetEnumName((int32)Value);
 		}
-		return enumPtr->GetEnumName((int32)Value);
+		return EmptyStr;
 	}
 }
 

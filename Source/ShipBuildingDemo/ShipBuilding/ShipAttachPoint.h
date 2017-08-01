@@ -49,10 +49,10 @@ public:
 	UShipAttachPoint();
 
 	// Begin SceneComponent Interface
-	virtual void InitializeComponent() override;
-	virtual void PostInitProperties() override;
-	virtual void BeginPlay() override;
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+	void InitializeComponent() override;
+	void PostInitProperties() override;
+	void BeginPlay() override;
+	void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 	// End SceneComponent Interface
 
 	static void AttachPoints(UShipAttachPoint* A, UShipAttachPoint* B);
@@ -69,10 +69,10 @@ public:
 	/**
 	 *	Is this point attached to another ship part
 	 */
-	bool IsAttached() const;
+	bool IsAttached() const noexcept;
 
 	// If this point is attached to the other.
-	bool IsAttachedToPoint(const UShipAttachPoint* OtherPoint) const;
+	bool IsAttachedToPoint(const UShipAttachPoint* OtherPoint) const noexcept;
 
 	// Detaches from it's current point
 	void DetachFromPoint();

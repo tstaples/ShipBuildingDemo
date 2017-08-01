@@ -24,9 +24,9 @@ void UShipAttachPoint::DetachPoints(UShipAttachPoint* A, UShipAttachPoint* B)
 
 // Sets default values for this component's properties
 UShipAttachPoint::UShipAttachPoint()
-	: OwningShipPart(nullptr)
-	, bIsHighlighted(false)
-	, AttachedToPoint(nullptr)
+: OwningShipPart(nullptr)
+, bIsHighlighted(false)
+, AttachedToPoint(nullptr)
 {
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = false;
@@ -97,7 +97,7 @@ bool UShipAttachPoint::IsCompatibleWith(EPartType PartType) const
 	return CompatibleParts.Contains(PartType);
 }
 
-bool UShipAttachPoint::IsAttached() const
+bool UShipAttachPoint::IsAttached() const noexcept
 {
 	return (AttachedToPoint != nullptr);
 }
@@ -127,7 +127,7 @@ void UShipAttachPoint::DetachFromPoint()
 	AttachPointSphere->SetVisibility(true);
 }
 
-bool UShipAttachPoint::IsAttachedToPoint(const UShipAttachPoint* OtherPoint) const
+bool UShipAttachPoint::IsAttachedToPoint(const UShipAttachPoint* OtherPoint) const noexcept
 {
 	return (AttachedToPoint != nullptr && AttachedToPoint == OtherPoint);
 }
@@ -141,12 +141,14 @@ FVector UShipAttachPoint::GetNormal() const
 void UShipAttachPoint::SetHighlighted(bool bHighlighted)
 {
 	if (bHighlighted == bIsHighlighted || !ensureMsgf(SphereDMI != nullptr, L"SphereDMI not set"))
+	{
 		return;
+	}
 
 	// Change the color param to green or white depending on if we're highlighting or not.
 	// 'Color' param is exposed via the material instance.
 	const FLinearColor NewColor = bHighlighted ? FLinearColor::Green : FLinearColor::White;
-	SphereDMI->SetVectorParameterValue(TEXT("Color"), NewColor);
+	SphereDMI->SetVectorParameterValue(TEXT("Color"), MoveTemp(NewColor));
 
 	bIsHighlighted = bHighlighted;
 }

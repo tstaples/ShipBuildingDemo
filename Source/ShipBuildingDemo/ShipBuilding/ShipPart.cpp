@@ -7,7 +7,7 @@
 
 // Sets default values
 AShipPart::AShipPart()
-	: ShipPartMesh(nullptr)
+: ShipPartMesh(nullptr)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -56,7 +56,7 @@ void AShipPart::Deselect()
 {
 }
 
-bool AShipPart::IsAttached() const
+bool AShipPart::IsAttached() const noexcept
 {
 	return AttachPoints.ContainsByPredicate([](UShipAttachPoint* P) { return P->IsAttached(); });
 }
@@ -89,7 +89,9 @@ TArray<UShipAttachPoint*> AShipPart::GetPointsCompatibleWith(EPartType Type) con
 	for (auto* AttachPoint : AttachPoints)
 	{
 		if (!AttachPoint->IsAttached() && AttachPoint->IsCompatibleWith(Type))
+		{
 			Points.Add(AttachPoint);
+		}
 	}
 	return Points;
 }
@@ -100,7 +102,9 @@ TArray<UShipAttachPoint*> AShipPart::GetAvailableAttachPoints() const
 	for (auto* AttachPoint : AttachPoints)
 	{
 		if (!AttachPoint->IsAttached())
+		{
 			Points.Add(AttachPoint);
+		}
 	}
 	return Points;
 }

@@ -26,7 +26,7 @@ struct FShipPartData
 	EPartType PartType;
 
 	// Default constructor
-	FShipPartData() {}
+	FShipPartData() = default;
 
 private:
 	friend class UShipPartFactory;
@@ -88,8 +88,8 @@ public:
 	AShipPart* MakeShipPart(UObject* WorldContext, FName PartName, FVector SpawnLocation = FVector(0.f, 0.f, 200.f));
 
 	// Accessors
-	FORCEINLINE bool HasLoadedAssetData() const { return bAssetDataLoaded; }
-	FORCEINLINE const TArray<FShipPartData>& GetShipPartData() const { return ShipPartData; }
+	FORCEINLINE bool HasLoadedAssetData() const noexcept { return bAssetDataLoaded; }
+	FORCEINLINE const TArray<FShipPartData>& GetShipPartData() const noexcept { return ShipPartData; }
 
 private:
 	/**

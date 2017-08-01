@@ -16,5 +16,4 @@ class SHIPBUILDINGDEMO_API AShipEditorGameMode : public AGameMode
 	
 public:
 	AShipEditorGameMode();
-	
 };

@@ -16,7 +16,7 @@ class SHIPBUILDINGDEMO_API AShipEditorHUD : public AHUD
 	GENERATED_BODY()
 	
 public:
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category=AShipEditorHUD)

@@ -9,8 +9,8 @@
 
 
 AShipEditorPlayerController::AShipEditorPlayerController()
-	: CurrentlyHeldShipPart(nullptr)
-	, ShipPartFactory(nullptr)
+: CurrentlyHeldShipPart(nullptr)
+, ShipPartFactory(nullptr)
 {
 	bShowMouseCursor = true;
 }
@@ -39,7 +39,9 @@ void AShipEditorPlayerController::OnClick()
 
 	FHitResult Hit;
 	if (!GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit))
+	{
 		return;
+	}
 
 	if (Hit.Actor.IsValid() && Hit.Actor->IsA<AShipPart>())
 	{
@@ -90,7 +92,9 @@ void AShipEditorPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (!HoldingShipPart())
+	{
 		return;
+	}
 
 	FVector WorldLocation(ForceInitToZero);
 	FVector WorldDirection(ForceInitToZero);
@@ -109,7 +113,9 @@ void AShipEditorPlayerController::Tick(float DeltaTime)
 		{
 			// Mouse hasn't moved far enough to un-snap.
 			if (Delta.Size() < CurrentlyHeldShipPart->GetMinSnapDistance())
+			{
 				return;
+			}
 
 			// Detach the current ship part
 			CurrentlyHeldShipPart->DetatchAllPoints();
@@ -144,8 +150,7 @@ void AShipEditorPlayerController::Tick(float DeltaTime)
 
 void AShipEditorPlayerController::SpawnShipPart(FName PartName)
 {
-	AShipPart* ShipPart = ShipPartFactory->MakeShipPart(this, PartName);
-	if (ShipPart)
+	if (auto ShipPart = ShipPartFactory->MakeShipPart(this, PartName))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Successfully created part: %s"), *PartName.ToString());
 		// Add the part to our internal list.
@@ -166,7 +171,7 @@ bool AShipEditorPlayerController::CollectCompatiblePoints(const AShipPart* ShipP
 
 	// TODO: allow slight difference and compensate by rotating when snapping.
 	// Will be needed for snapping parts onto non-flat surfaces.
-	static const float AllowedAngleDifference = 0.f; // Radians
+	static constexpr float AllowedAngleDifference = 0.f; // Radians
 
 	// Grab the attach points for the selected part to avoid fetching inside the loop.
 	const EPartType SelectedPartType = ShipPart->GetPartType();
@@ -183,19 +188,25 @@ bool AShipEditorPlayerController::CollectCompatiblePoints(const AShipPart* ShipP
 	{
 		// Ignore the part we're checking
 		if (OtherPart == ShipPart)
+		{
 			continue;
+		}
 
 		// Does the other part have any points that are compatible with the selected part?
 		const EPartType OtherPartType = OtherPart->GetPartType();
 		auto PointsCompatibleWithSelected = OtherPart->GetPointsCompatibleWith(SelectedPartType);
 		if (PointsCompatibleWithSelected.Num() == 0)
+		{
 			continue;
+		}
 
 		// Check if the selected part has any points that are compatible with the other part.
 		for (auto* AttachPoint : AttachPoints)
 		{
 			if (!AttachPoint->IsCompatibleWith(OtherPartType))
+			{
 				continue;
+			}
 
 			// Iter through all the compatible points on the other part
 			for (auto* OtherPoint : PointsCompatibleWithSelected)
@@ -204,7 +215,9 @@ bool AShipEditorPlayerController::CollectCompatiblePoints(const AShipPart* ShipP
 				// If the normals aren't within the allowed range then ignore them.
 				const float Dot = FVector::DotProduct(AttachPoint->GetNormal(), OtherPoint->GetNormal());
 				if (!FMath::IsNearlyEqual(Dot, -1.f, THRESH_NORMALS_ARE_PARALLEL))
+				{
 					continue;
+				}
 
 				OutCompatiblePoints.Add({ AttachPoint, OtherPoint });
 			}
@@ -226,7 +239,9 @@ void AShipEditorPlayerController::SetCachedPointsHighlighted(bool bHighlighted, 
 int32 AShipEditorPlayerController::FindPointsToSnapTogether(const TArray<FAttachPointCacheEntry>& CompatiblePoints, const FVector& Delta) const
 {
 	if (CachedCompatiblePoints.Num() == 0)
+	{
 		return INDEX_NONE;
+	}
 
 	// Cache these outside the loop as they won't change per entry.
 	const AShipPart* ShipPart = CompatiblePoints[0].OwnedPoint->GetOwningShipPart();
@@ -248,7 +263,9 @@ int32 AShipEditorPlayerController::FindPointsToSnapTogether(const TArray<FAttach
 
 		// Broad phase check.
 		if (!FBoxSphereBounds::BoxesIntersect(HeldSnapBounds, OtherPart->GetSnapBounds()))
+		{
 			continue;
+		}
 
 		// Find the two nodes that are closest together and within the min snap distance.
 		const float MinSnapDistanceSq = FMath::Square(ShipPart->GetMinSnapDistance());
@@ -267,7 +284,9 @@ void AShipEditorPlayerController::DestroyShipPart(AShipPart* ShipPart)
 {
 	// Ensure both as either raise concerns
 	if (!ensure(ShipPart) || !ensure(!ShipPart->IsActorBeingDestroyed()))
+	{
 		return;
+	}
 
 	ShipParts.Remove(CurrentlyHeldShipPart);
 	ShipPart->DetatchAllPoints();
@@ -344,16 +363,9 @@ bool AShipEditorPlayerController::LoadShip(const FString& ShipName)
 
 UShipSaveGame* AShipEditorPlayerController::GetSaveDataForShip(const FString& ShipName) const
 {
-	UShipSaveGame* ShipSaveData = nullptr;
-	if (UGameplayStatics::DoesSaveGameExist(ShipName, 0))
-	{
-		ShipSaveData = Cast<UShipSaveGame>(UGameplayStatics::LoadGameFromSlot(ShipName, 0));
-	}
-	else
-	{
-		ShipSaveData = Cast<UShipSaveGame>(UGameplayStatics::CreateSaveGameObject(UShipSaveGame::StaticClass()));
-	}
-	return ShipSaveData;
+	return UGameplayStatics::DoesSaveGameExist(ShipName, 0)
+		? Cast<UShipSaveGame>(UGameplayStatics::LoadGameFromSlot(ShipName, 0))
+		: Cast<UShipSaveGame>(UGameplayStatics::CreateSaveGameObject(UShipSaveGame::StaticClass()));
 }
 
 bool AShipEditorPlayerController::GetSavedShipNames(TArray<FName>& OutShipNames)
@@ -362,13 +374,16 @@ bool AShipEditorPlayerController::GetSavedShipNames(TArray<FName>& OutShipNames)
 	struct FSaveGameVisitor : public IPlatformFile::FDirectoryVisitor
 	{
 		TArray<FName>& SaveGameFileNames;
-		TFunction<void(FString& Filename)> FormatFunction;
+		using FormatFunc = TFunction<void(FString& Filename)>;
+		FormatFunc FormatFunction;
 
-		FSaveGameVisitor(TArray<FName>& OutFileNames, const TFunction<void(FString& Filename)>& Formatter) 
-			: SaveGameFileNames(OutFileNames)
-			, FormatFunction(Formatter) {}
+		FSaveGameVisitor(TArray<FName>& OutFileNames, FormatFunc&& Formatter)
+		: SaveGameFileNames(OutFileNames)
+		, FormatFunction(MoveTemp(Formatter)) 
+		{
+		}
 
-		virtual bool Visit(const TCHAR* FilenameOrDirectory, bool bIsDirectory) override
+		bool Visit(const TCHAR* FilenameOrDirectory, bool bIsDirectory) final
 		{
 			if (!bIsDirectory)
 			{
@@ -383,8 +398,9 @@ bool AShipEditorPlayerController::GetSavedShipNames(TArray<FName>& OutShipNames)
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	const FString SaveGameDir = FString::Printf(TEXT("%s/SaveGames"), *FPaths::GameSavedDir());
 
-	FSaveGameVisitor SaveGameVisitor{ OutShipNames, [](FString& Filename) {
+	FSaveGameVisitor SaveGameVisitor{OutShipNames, [](FString& Filename) 
+	{
 		Filename = FPaths::GetBaseFilename(Filename); // Get just the filename.
-	} };
+	}};
 	return PlatformFile.IterateDirectory(*SaveGameDir, SaveGameVisitor);
 }

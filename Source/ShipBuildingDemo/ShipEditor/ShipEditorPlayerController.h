@@ -21,11 +21,7 @@ class SHIPBUILDINGDEMO_API AShipEditorPlayerController : public APlayerControlle
 		UShipAttachPoint* OwnedPoint;
 		UShipAttachPoint* OtherPoint;
 
-		FAttachPointCacheEntry() {}
-		FAttachPointCacheEntry(UShipAttachPoint* Owned, UShipAttachPoint* Other) 
-			: OwnedPoint(Owned), OtherPoint(Other) {}
-
-		bool IsValid() const { return (OwnedPoint && OtherPoint); }
+		bool IsValid() const noexcept { return (OwnedPoint && OtherPoint); }
 	};
 
 	// Ship attach points compatible with the currently held ship part.
@@ -51,9 +47,9 @@ public:
 	AShipEditorPlayerController();
 	
 	// Begin PlayerController Interface.
-	virtual void PostInitializeComponents() override;
-	virtual void SetupInputComponent() override;
-	virtual void Tick(float DeltaTime) override;
+	void PostInitializeComponents() override;
+	void SetupInputComponent() override;
+	void Tick(float DeltaTime) override;
 	// End PlayerController Interface.
 
 	UFUNCTION(BlueprintCallable, Category = "ShipPartFactory")
@@ -82,8 +78,8 @@ public:
 	UFUNCTION(Exec, BlueprintCallable, Category = "ShipManipulation")
 	void ClearShip();
 
-	FORCEINLINE bool HoldingShipPart() const { return (CurrentlyHeldShipPart != nullptr); }
-	FORCEINLINE class UShipPartFactory* GetShipPartFactory() const { return ShipPartFactory; }
+	FORCEINLINE bool HoldingShipPart() const noexcept { return (CurrentlyHeldShipPart != nullptr); }
+	FORCEINLINE class UShipPartFactory* GetShipPartFactory() const noexcept { return ShipPartFactory; }
 
 private:
 	// Input callbacks

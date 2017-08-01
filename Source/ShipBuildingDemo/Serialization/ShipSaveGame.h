@@ -8,9 +8,6 @@
 #include "ShipSaveGame.generated.h"
 
 
-/**
- * TBH I'm not entirely sure what this is for.
- */
 struct FShipSaveGameArchiveProxy : public FObjectAndNameAsStringProxyArchive 
 {
 	explicit FShipSaveGameArchiveProxy(FArchive& innerArchive);
@@ -52,5 +49,5 @@ public:
 	 */
 	bool LoadShip(UObject* WorldContext, TArray<class AShipPart*>& OutShipParts) const;
 
-	FORCEINLINE const FString& GetShipName() const { return ShipName; }
+	FORCEINLINE const FString& GetShipName() const noexcept { return ShipName; }
 };

@@ -23,14 +23,14 @@ public:
 	AShipBuildingDemoPawn();
 
 	// Begin AActor overrides
-	virtual void Tick(float DeltaSeconds) override;
-	virtual void NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
+	void Tick(float DeltaSeconds) override;
+	void NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 	// End AActor overrides
 
 protected:
 
 	// Begin APawn overrides
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override; // Allows binding actions/axes to functions
+	void SetupPlayerInputComponent(class UInputComponent* InputComponent) override; // Allows binding actions/axes to functions
 	// End APawn overrides
 
 	/** Bound to the thrust axis */
@@ -74,9 +74,9 @@ private:
 
 public:
 	/** Returns PlaneMesh subobject **/
-	FORCEINLINE class UStaticMeshComponent* GetPlaneMesh() const { return PlaneMesh; }
+	FORCEINLINE class UStaticMeshComponent* GetPlaneMesh() const noexcept { return PlaneMesh; }
 	/** Returns SpringArm subobject **/
-	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	FORCEINLINE class USpringArmComponent* GetSpringArm() const noexcept { return SpringArm; }
 	/** Returns Camera subobject **/
-	FORCEINLINE class UCameraComponent* GetCamera() const { return Camera; }
+	FORCEINLINE class UCameraComponent* GetCamera() const noexcept { return Camera; }
 };

@@ -31,7 +31,7 @@ namespace
 const FString FShipPartData::Prefix = "BLU_";
 
 FShipPartData::FShipPartData(const FAssetData& Data)
-	: AssetData(Data)
+: AssetData(Data)
 {
 	FullName = Data.AssetName;
 
@@ -54,14 +54,16 @@ FString FShipPartData::GetGeneratedClassName(const FShipPartData& ShipPartData)
 //////////////////////////////////////////////////////////////////////////
 
 UShipPartFactory::UShipPartFactory()
-	: bAssetDataLoaded(false)
+: bAssetDataLoaded(false)
 {
 }
 
 void UShipPartFactory::Init(const FString& RootShipPartPath)
 {
 	if (bAssetDataLoaded)
+	{
 		return;
+	}
 
 	// Create an object library for the ship parts and load the asset data for all of them.
 	ShipPartLibrary = UObjectLibrary::CreateLibrary(AShipPart::StaticClass(), true, false);
@@ -86,7 +88,7 @@ void UShipPartFactory::Init(const FString& RootShipPartPath)
 		const FString Path = DirName(Data.ObjectPath.ToString());
 		PartData.PartType = ShipPartPaths.Contains(Path) ? ShipPartPaths[Path] : EPartType::PT_MAX;
 
-		ShipPartData.Add(PartData);
+		ShipPartData.Add(MoveTemp(PartData));
 	}
 
 	bAssetDataLoaded = true;
@@ -96,14 +98,14 @@ AShipPart* UShipPartFactory::MakeShipPart(UObject* WorldContext, FName PartName,
 {
 	checkf(HasLoadedAssetData(), TEXT("Asset data has not been loaded, ensure that Init() has been called first."));
 
-	const FShipPartData* Data = ShipPartData.FindByPredicate([PartName](const auto& Data) { return Data.Name == PartName; });
+	const FShipPartData* Data = ShipPartData.FindByPredicate([&PartName](auto&& Data) { return Data.Name == PartName; });
 	if (!Data)
 	{
 		UE_LOG(LogShipPartFactory, Error, TEXT("Failed to find data for part: %s"), *PartName.ToString());
 		return nullptr;
 	}
 
-	FString GeneratedClassName = FShipPartData::GetGeneratedClassName(*Data);
+	const FString GeneratedClassName = FShipPartData::GetGeneratedClassName(*Data);
 	if (GeneratedClassName.IsEmpty())
 	{
 		UE_LOG(LogShipPartFactory, Error, TEXT("Failed to get generated class name for part: %s"), *PartName.ToString());
@@ -120,7 +122,9 @@ AShipPart* UShipPartFactory::MakeShipPart(UObject* WorldContext, FName PartName,
 
 	UWorld* WorldRef = GEngine->GetWorldFromContextObject(WorldContext);
 	if (!ensureMsgf(WorldRef, TEXT("World is invalid")))
+	{
 		return nullptr;
+	}
 	
 	// TODO: Maybe spawn the part where the mouse is (drag and drop)
 	FActorSpawnParameters SpawnParams;
@@ -158,7 +162,7 @@ TMap<FString, EPartType> UShipPartFactory::MakeShipPartPathsToTypes(const FStrin
 		
 		// Make the path
 		const FString PartPath = FPaths::Combine(*RootPath, *EnumName);
-		PathToTypes.Add(PartPath, PartType);
+		PathToTypes.Add(MoveTemp(PartPath), PartType);
 	}
 	return PathToTypes;
 }

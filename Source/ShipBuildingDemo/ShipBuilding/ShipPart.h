@@ -41,16 +41,16 @@ public:
 	AShipPart();
 
 	// Begin AActor Interface.
-	virtual void PostInitializeComponents() override;
-	virtual void BeginPlay() override;
-	virtual void Tick( float DeltaSeconds ) override;
+	void PostInitializeComponents() override;
+	void BeginPlay() override;
+	void Tick(float DeltaSeconds) override;
 	// End AActor Interface.
 
 	void Select();
 	void Deselect();
 
 	// Returns true if any of this part's attach points are attached to anything
-	bool IsAttached() const;
+	bool IsAttached() const noexcept;
 
 	// Detatches from any other ship parts
 	void DetatchAllPoints();

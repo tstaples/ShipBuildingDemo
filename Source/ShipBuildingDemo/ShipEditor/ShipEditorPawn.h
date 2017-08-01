@@ -49,15 +49,15 @@ protected:
 public:
 	AShipEditorPawn();
 
-	virtual void PostInitializeComponents() override;
-	virtual void BeginPlay() override;
-	virtual void SetupPlayerInputComponent(UInputComponent* InInputComponent) override;
-	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
-	virtual void AddControllerYawInput(float Val) override;
-	virtual void AddControllerPitchInput(float Val) override;
-	virtual void MoveForward(float Val) override;
-	virtual void MoveRight(float Val) override;
-	virtual void MoveUp_World(float Val) override;
+	void PostInitializeComponents() override;
+	void BeginPlay() override;
+	void SetupPlayerInputComponent(UInputComponent* InInputComponent) override;
+	void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
+	void AddControllerYawInput(float Val) override;
+	void AddControllerPitchInput(float Val) override;
+	void MoveForward(float Val) override;
+	void MoveRight(float Val) override;
+	void MoveUp_World(float Val) override;
 
 private:
 	void OnZoom(float Val);

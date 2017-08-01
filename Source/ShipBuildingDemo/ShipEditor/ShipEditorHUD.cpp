@@ -9,14 +9,14 @@ void AShipEditorHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AShipEditorPlayerController* PC = Cast<AShipEditorPlayerController>(GetOwningPlayerController());
+	auto* PC = Cast<AShipEditorPlayerController>(GetOwningPlayerController());
 	if (!PC)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to get pc"));
 		return;
 	}
 
-	UShipPartFactory* SPF = PC->GetShipPartFactory();
+	auto* SPF = PC->GetShipPartFactory();
 	check(SPF);
 	if (!SPF->HasLoadedAssetData())
 	{
