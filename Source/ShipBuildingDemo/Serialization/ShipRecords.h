@@ -15,7 +15,7 @@ struct FShipPartRecord
 
 	// The ShipPart class this part is.
 	UPROPERTY()
-	UClass* ShipTemplate;
+	FString ShipTemplateName;
 
 	// Transform of the part.
 	UPROPERTY()

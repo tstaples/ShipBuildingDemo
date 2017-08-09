@@ -2,5 +2,6 @@
 
 #include "ShipBuildingDemo.h"
 #include "ShipRecords.h"
+#include "ShipBuilding/ShipPart.h"
 
 

@@ -26,15 +26,15 @@ bool UShipSaveGame::SaveShip(const FString& NameOfShip, const TArray<AShipPart*>
 	{
 		FShipPartRecord Record{};
 		Record.PartTransform = ShipPart->GetActorTransform();
-		Record.ShipTemplate = ShipPart->GetClass();
+		Record.ShipTemplateName = ShipPart->GetClass()->GetPathName();
 
-		FMemoryWriter MemoryWriter{ Record.ShipPartData, true };
+		FMemoryWriter MemoryWriter{ Record.ShipPartData };
 
 		// simple proxy specifies the serialisation behaviour
 		FShipSaveGameArchiveProxy Archive{ MemoryWriter };
-
+		
 		ShipPart->Serialize(Archive);
-
+		
 		ShipPartRecords.Add(MoveTemp(Record));
 	}
 	return true;
@@ -60,12 +60,18 @@ bool UShipSaveGame::LoadShip(UObject* WorldContext, TArray<AShipPart*>& OutShipP
 	}
 
 	// Create the ship part instances from the records and store in OutShipParts.
-	for (const auto& Record : ShipPartRecords)
+	for (const FShipPartRecord& Record : ShipPartRecords)
 	{
-		auto ShipPart = Cast<AShipPart>(UGameplayStatics::BeginDeferredActorSpawnFromClass(WorldRef, Record.ShipTemplate, Record.PartTransform));
+		UClass* ShipTemplate = FindObject<UClass>(ANY_PACKAGE, *Record.ShipTemplateName);
+		if (!ShipTemplate)
+		{
+			ShipTemplate = LoadObject<UClass>(NULL, *Record.ShipTemplateName);
+		}
+
+		auto ShipPart = Cast<AShipPart>(UGameplayStatics::BeginDeferredActorSpawnFromClass(WorldRef, ShipTemplate, Record.PartTransform));
 		if (!ShipPart) 
 		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to create ship part: %s"), *GetNameSafe(Record.ShipTemplate));
+			UE_LOG(LogTemp, Error, TEXT("Failed to create ship part: %s"), ShipTemplate);
 			return false;
 		}
 
@@ -76,7 +82,7 @@ bool UShipSaveGame::LoadShip(UObject* WorldContext, TArray<AShipPart*>& OutShipP
 
 		ShipPart = Cast<AShipPart>(UGameplayStatics::FinishSpawningActor(ShipPart, Record.PartTransform));
 		check(ShipPart);
-		OutShipParts.Add(ShipPart);
+		OutShipParts.Add(MoveTemp(ShipPart));
 	}
 
 	return true;
