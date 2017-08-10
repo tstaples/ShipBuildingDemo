@@ -19,7 +19,8 @@ This section will go over the controls for the demo.
 ### Creating Ship Parts
 To create a ship part, select the category of the part you'd like to create from the top left, then select the part you'd like to make. The part will spawn in the center, so if there's an existing part there already it will be underneath it.
 
-![Hierarchy](Images/CockpitHierarchy.PNG)
+![Hierarchy](Images/CockpitHierachy.PNG)
+
 ![Compatible parts](Images/CockpitCompatibleParts.PNG)
 
 ### Snapping Parts
