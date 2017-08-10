@@ -1,5 +1,7 @@
 This document will outline the usage, design and structure of the ship building demo.
 
+Note that this was created using UE4.13.
+
 ![Example](Images/Example.PNG)
 
 # Controls
