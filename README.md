@@ -1,5 +1,7 @@
 This document will outline the usage, design and structure of the ship building demo.
 
+![Example](Images/Example.PNG)
+
 # Controls
 This section will go over the controls for the demo.
 
@@ -12,8 +14,13 @@ This section will go over the controls for the demo.
 * Holding Left click on a ship part and moving the mouse will move the ship part around.
 * Pressing Delete while holding a ship part will delete it.
 
+![Control Example](Images/Example2.PNG)
+
 ### Creating Ship Parts
 To create a ship part, select the category of the part you'd like to create from the top left, then select the part you'd like to make. The part will spawn in the center, so if there's an existing part there already it will be underneath it.
+
+![Hierarchy](Images/CockpitHierarchy.PNG)
+![Compatible parts](Images/CockpitCompatibleParts.PNG)
 
 ### Snapping Parts
 When you select a ship part (click and hold), any attach points the part has that are compatible with points of other ship parts will appear green. You can snap two compatible points together by dragging the part over to the other one. Once they are close enough they should automatically snap into place.
@@ -23,7 +30,11 @@ To un-snap parts just select the part and drag it away from the other ones.
 To save your current ship, click the save button in the bottom right corner of the UI. An input dialogue will pop up and ask you to enter the name of the ship.
 NOTE: There currently isn't any validity checks or checks if the filename already exists so using the same name will overwrite any existing one with the same name.
 
+![Saving a ship](Images/Saving.PNG)
+
 To load a ship, click the load button in the bottom right corner of the UI. A dialogue will pop up with a grid containing buttons with the names of all the saved ships. Click the button for the one you wish to load.
+
+![Loading a ship](Images/Loading.PNG)
 
 NOTE: A lot of the UI is super basic and most of it is placeholder for the sake of the demo, so it will obviously lack many features and aesthetic.
 
@@ -79,33 +90,22 @@ For a ship part to attach to another the following criteria must be met:
 
 Based on this criteria there can be multiple attach points on each part that are compatible with each other. I have added another criteria filter that the normal of two possibly compatible points must be pointing in opposite directions. This is just because I am not rotating the pieces at all, so the parts must be able to maintain their existing rotation to snap together. This can be removed in the future depending on how it should function.
 
-{F35166}
-
 ----
 # Creating a Ship Part
 1. Select the folder for the type of part you want to make. This will make it so the new blueprint is created in this folder.
-{F35172}
 2. Create a new blueprint based and set the parent class to `ShipPart`.
-{F35176}
-{F35174}
 3. Rename the blueprint to have the "BLU_" prefix as required, then the rest of the part name. Note that the name after the prefix is what will appear in the UI.
-{F35178}
 4. Open the blueprint for the newly created ship part, then click the "Class Defaults" button in the toolbar.
 5. In the details panel on the right you can set the part type (must match the folder the blueprint was created in). You can also set the default types that this parts attach points should be compatible with.
-{F35182}
 
 ### Adding a mesh
 1. Open the blueprint of the ship part.
 2. In the component list on the left, click **Add Component** and select "Static Mesh".
-{F35170}
 3. Select the newly created static mesh component and set the mesh to whatever asset you want via the details panel on the right.
-{F35168}
 
 ### Adding attach points
 1. The initial steps are identical to adding a mesh, but instead of a static mesh component, create an `AttachPointComponent`.
-{F35180}
 2. If you haven't already, select the "Viewport" tab so you can see the visual representation of the part. In this view you can move the attach point around (after selecting the component in the components list on the left) and rotate it so the red arrow points in the direction that is opposite of the face it's nearest to.
-{F35184}
 
 
 # Adding a new ship part type
